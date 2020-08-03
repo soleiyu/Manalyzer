@@ -1,10 +1,14 @@
-set terminal png size 12000, 1000
+set terminal png size 720, 380
 set out "res.png"
 set title "wav dump"
+
+set multiplot layout 2, 1
 
 set xlabel 'sample'
 set ylabel 'value'
 set grid 
+set yrange[-1:1]
+set xrange[0:5513]
 
-plot "dump" using 1:2 with lines title "rd" linewidth 2 lc rgb "#f00000",\
-	"" using 1:3 with lines title "ld" linewidth 2 lc rgb "#00f000",\
+plot "dump" using 1:2 with lines title "rd" linewidth 2 lc rgb "0xA0A00000"
+plot "dump" using 1:3 with lines title "ld" linewidth 2 lc rgb "0xA000A000"

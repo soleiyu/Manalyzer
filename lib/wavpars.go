@@ -33,6 +33,117 @@ func Wavout(fn string, inp Wav) {
 	file.Write(inp.DATA)
 }
 
+func QBDatadumpFde(inp Wav, fn string, tbeg, tlim float32) {
+	file, err := os.Create(fn)
+	defer file.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	num := int(float32(inp._SRate) * tlim)
+	bof := int(float32(inp._SRate) * tbeg)
+	rd, ld := Datapars16(inp.DATA)
+
+	if len(rd) < bof + 2 * num {
+		bof = len(rd) - 2 * num
+	}
+
+	for i := 0; i < num / 4; i++ {
+		file.WriteString(strconv.Itoa(i))
+		file.WriteString(" ")
+		sfv := fmt.Sprintf("%f", float32(rd[bof + i * 4 + num]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString(" ")
+		sfv = fmt.Sprintf("%f", float32(ld[bof + i * 4 + num]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString("\n")
+	}
+}
+
+
+func QDatadumpFde(inp Wav, fn string, tbeg, tlim float32) {
+	file, err := os.Create(fn)
+	defer file.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	num := int(float32(inp._SRate) * tlim)
+	bof := int(float32(inp._SRate) * tbeg)
+	rd, ld := Datapars16(inp.DATA)
+
+	if len(rd) < bof + num {
+		bof = len(rd) - num
+	}
+
+	for i := 0; i < num / 4; i++ {
+		file.WriteString(strconv.Itoa(i))
+		file.WriteString(" ")
+		sfv := fmt.Sprintf("%f", float32(rd[bof + i * 4]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString(" ")
+		sfv = fmt.Sprintf("%f", float32(ld[bof + i * 4]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString("\n")
+	}
+}
+
+func DatadumpFde(inp Wav, fn string, tbeg, tlim float32) {
+	file, err := os.Create(fn)
+	defer file.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	num := int(float32(inp._SRate) * tlim)
+	bof := int(float32(inp._SRate) * tbeg)
+	rd, ld := Datapars16(inp.DATA)
+
+	if len(rd) < bof + num {
+		bof = len(rd) - num
+	}
+
+	for i := 0; i < num; i++ {
+		file.WriteString(strconv.Itoa(i))
+		file.WriteString(" ")
+		sfv := fmt.Sprintf("%f", float32(rd[bof + i]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString(" ")
+		sfv = fmt.Sprintf("%f", float32(ld[bof + i]) / float32(0x7FFF))
+		file.WriteString(sfv)
+		file.WriteString("\n")
+	}
+}
+
+func Datadump16de(inp Wav, fn string, tbeg, tlim float32) {
+	file, err := os.Create(fn)
+	defer file.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	num := int(float32(inp._SRate) * tlim)
+	bof := int(float32(inp._SRate) * tbeg)
+	rd, ld := Datapars16(inp.DATA)
+
+	if len(rd) < bof + num {
+		bof = len(rd) - num
+	}
+
+	for i := 0; i < num; i++ {
+		file.WriteString(strconv.Itoa(i))
+		file.WriteString(" ")
+		file.WriteString(strconv.Itoa(int(rd[bof + i])))
+		file.WriteString(" ")
+		file.WriteString(strconv.Itoa(int(ld[bof + i])))
+		file.WriteString("\n")
+	}
+}
+
 func Datadump16(inp Wav, fn string, tlim float32) {
 	file, err := os.Create(fn)
 	defer file.Close()
@@ -52,7 +163,6 @@ func Datadump16(inp Wav, fn string, tlim float32) {
 		file.WriteString(strconv.Itoa(int(ld[i])))
 		file.WriteString("\n")
 	}
-
 }
 
 func Datapars16(inp []byte) ([]int16, []int16) {
@@ -60,8 +170,8 @@ func Datapars16(inp []byte) ([]int16, []int16) {
 	ld := make([]int16, len(inp) / 4)
 
 	for i := 0; i < len(inp) / 4; i++ {
-		rd[i] = int16(inp[4 * i + 0]) * int16(0x100) + int16(inp[4 * i + 1])
-		ld[i] = int16(inp[4 * i + 2]) * int16(0x100) + int16(inp[4 * i + 3])
+		rd[i] = int16(inp[4 * i + 1]) * int16(0x100) + int16(inp[4 * i + 0])
+		ld[i] = int16(inp[4 * i + 3]) * int16(0x100) + int16(inp[4 * i + 2])
 	}
 
 	return rd, ld
