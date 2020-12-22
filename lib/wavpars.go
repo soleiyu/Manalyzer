@@ -165,6 +165,20 @@ func Datadump16(inp Wav, fn string, tlim float32) {
 	}
 }
 
+func Dataparsf64(inp []byte) ([]float64, []float64) {
+	rd := make([]float64, len(inp) / 4)
+	ld := make([]float64, len(inp) / 4)
+
+	for i := 0; i < len(inp) / 4; i++ {
+		cache := int16(inp[4 * i + 1]) * int16(0x100) + int16(inp[4 * i + 0])
+		rd[i] = float64(cache) / float64(0x8000)
+		cache = int16(inp[4 * i + 3]) * int16(0x100) + int16(inp[4 * i + 2])
+		ld[i] = float64(cache) / float64(0x8000)
+	}
+
+	return rd, ld
+}
+
 func Datapars16(inp []byte) ([]int16, []int16) {
 	rd := make([]int16, len(inp) / 4)
 	ld := make([]int16, len(inp) / 4)
